@@ -1,16 +1,16 @@
-using System; 
-using System.Collections.Generic;  
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 class Program
 {
-    static List<User> users = new List<User>(); // เก็บข้อมูลผู้ใช้ทั้งหมด
+    static List<User> users = new List<User>();
 
     static void Main()
     {
-        Console.WriteLine("Welcome to the Daily Calorie Calculator Program!");
+        Console.WriteLine("Welcome to the Daily Calorie Calculator Program");
         Console.WriteLine("--------------------------------------------------");
-
         AddUser();
         while (true)
         {
@@ -20,19 +20,18 @@ class Program
             Console.WriteLine("3. Exit program");
             Console.Write("Please select an option (1-3): ");
             string option = Console.ReadLine().Trim();
-
             if (option == "1")
             {
-                AddUser(); // 
+                AddUser(); 
             }
             else if (option == "2")
             {
-                ViewUserData(); // 
+                ViewUserData(); 
             }
             else if (option == "3")
             {
                 Console.WriteLine("Thank you for using the program");
-                break; // 
+                break; 
             }
             else
             {
@@ -44,11 +43,11 @@ class Program
     static void AddUser()
     {
         string name;
-        while (true) 
+        while (true)
         {
             Console.Write("Enter your name (English letters only): ");
-            name = Console.ReadLine().Trim();  //เมื่อรinput เข้ามา ค่าจะเก็บไปที่ name 
-            if (Regex.IsMatch(name, @"^[A-Za-z]+$")) break;    
+            name = Console.ReadLine().Trim();
+            if (Regex.IsMatch(name, @"^[A-Za-z]+$")) break;
             Console.WriteLine("\nInvalid input. Please enter English letters only.\n");
         }
 
@@ -58,16 +57,15 @@ class Program
             Console.Write("Enter your gender (Male/Female): ");
             gender = Console.ReadLine().Trim().ToLower();
             if (gender == "male" || gender == "female") break;
-            Console.WriteLine(\n"Invalid input. Please enter 'Male' or 'Female'.\n");
+            Console.WriteLine("\nInvalid input. Please enter 'Male' or 'Female'.\n");
         }
 
         double weight = GetPositiveInput("Enter your weight (kg): ");
         double height = GetPositiveInput("Enter your height (cm): ") / 100;
         int age = (int)GetPositiveInput("Enter your age: ");
-
         double bmi = weight / (height * height);
-
         Console.WriteLine($"\nYour BMI is: {bmi:F2}");
+
         string bmiCategory;
         if (bmi < 18.5)
         {
@@ -97,9 +95,9 @@ class Program
         {
             targetWeight = GetPositiveInput("Enter your target weight (kg): ");
             if ((bmiCategory == "Underweight" && targetWeight > weight) ||
-                ((bmiCategory == "Overweight" || bmiCategory == "Obese") && targetWeight < weight))
+            ((bmiCategory == "Overweight" || bmiCategory == "Obese") && targetWeight < weight))
             {
-                Console.WriteLine("Good choice Your target weight is appropriate.");
+                Console.WriteLine("Good choice. Your target weight is appropriate.");
                 break;
             }
             else
@@ -111,7 +109,6 @@ class Program
         double bmr = CalculateBMR(gender, weight, height, age);
         double caloriesForWorkout = bmr * 1.55;
         double caloriesForRest = bmr * 1.2;
-
         User newUser = new User
         {
             Name = name,
@@ -125,20 +122,17 @@ class Program
             CaloriesForWorkout = caloriesForWorkout,
             CaloriesForRest = caloriesForRest
         };
-
         users.Add(newUser);
-
-       
         DisplaySummary(newUser);
     }
 
-    static double GetPositiveInput(string prompt) 
+    static double GetPositiveInput(string prompt)
     {
         double value;
         while (true)
         {
             Console.Write(prompt);
-            if (double.TryParse(Console.ReadLine(), out value) && value > 0)  
+            if (double.TryParse(Console.ReadLine(), out value) && value > 0)
                 return value;
             Console.WriteLine("Invalid input. Please enter a positive number.");
         }
@@ -159,7 +153,7 @@ class Program
                     targetWeight = GetPositiveInput("Enter your target weight to bulk (kg): ");
                     if (targetWeight > weight)
                     {
-                        Console.WriteLine("Good choice Bulking up can help.");
+                        Console.WriteLine("Good choice! Bulking up can help.");
                         break;
                     }
                     else
@@ -171,7 +165,6 @@ class Program
                 double bmr = CalculateBMR(gender, weight, height, age);
                 double caloriesForWorkout = bmr * 1.55;
                 double caloriesForRest = bmr * 1.2;
-
                 User newUser = new User
                 {
                     Name = name,
@@ -187,13 +180,12 @@ class Program
                 };
 
                 users.Add(newUser);
-
                 DisplaySummary(newUser);
                 break;
             }
             else if (response == "no")
             {
-                Console.WriteLine("Thank you, No changes will be made.");
+                Console.WriteLine("Thank you, no changes will be made.");
                 break;
             }
             else
@@ -205,10 +197,17 @@ class Program
 
     static double CalculateBMR(string gender, double weight, double height, int age)
     {
-        return (gender == "male")
-            ? 10 * weight + 6.25 * (height * 100) - 5 * age + 5
-            : 10 * weight + 6.25 * (height * 100) - 5 * age - 161;
+        switch (gender)
+        {
+            case "male":
+                return 10 * weight + 6.25 * (height * 100) - 5 * age + 5;
+            case "female":
+                return 10 * weight + 6.25 * (height * 100) - 5 * age - 161;
+            default:
+                throw new ArgumentException("Invalid gender specified.");
+        }
     }
+
     static void DisplaySummary(User user)
     {
         Console.WriteLine("\n--- Summary ---");
@@ -219,8 +218,8 @@ class Program
         Console.WriteLine($"Age: {user.Age}");
         Console.WriteLine($"BMI: {user.BMI:F2} ({user.BMICategory})");
         Console.WriteLine($"Target Weight: {user.TargetWeight} kg");
-        Console.WriteLine($"Calories for workout days: {user.CaloriesForWorkout:F2} kcal/day");
-        Console.WriteLine($"Calories for rest days: {user.CaloriesForRest:F2} kcal/day");
+        Console.WriteLine($"Calories for workout days: {user.CaloriesForWorkout:F2} kcal / day");
+        Console.WriteLine($"Calories for rest days: {user.CaloriesForRest:F2} kcal / day");
     }
 
     static void ViewUserData()
@@ -230,7 +229,6 @@ class Program
             Console.WriteLine("No user data available.");
             return;
         }
-
         Console.WriteLine("\n--- User Data ---");
         foreach (var user in users)
         {
